@@ -36,6 +36,66 @@ document.addEventListener("DOMContentLoaded", () => {
   loadAllProducts();
 });
 
+const sections = [
+  { id: "hero", link: document.querySelector('nav ul li a[href="/"]') },
+  {
+    id: "featured-products",
+    link: document.querySelector('nav ul li a[href="#featured-products"]'),
+  },
+  {
+    id: "all-products",
+    link: document.querySelector('nav ul li a[href="#all-products"]'),
+  },
+];
+
+function highlightNav() {
+  const scrollPos = window.scrollY + window.innerHeight / 3;
+
+  sections.forEach(({ id, link }) => {
+    const section = document.getElementById(id);
+    if (!section || !link) return;
+
+    let offsetTop = section.offsetTop;
+    offsetTop -= 300;
+
+    if (
+      offsetTop <= scrollPos &&
+      offsetTop + section.offsetHeight > scrollPos
+    ) {
+      link.classList.add("active");
+    } else {
+      link.classList.remove("active");
+    }
+  });
+}
+
+window.addEventListener("scroll", highlightNav);
+
+highlightNav();
+
+window.addEventListener("scroll", () => {
+  const scrollPos = window.scrollY + window.innerHeight / 3;
+
+  sections.forEach(({ id, link }) => {
+    const section = document.getElementById(id);
+    if (!section || !link) return;
+
+    let offsetTop = section.offsetTop;
+    if (id === "hero") {
+      offsetTop -= 200;
+    }
+
+    if (
+      offsetTop <= scrollPos &&
+      offsetTop + section.offsetHeight > scrollPos
+    ) {
+      link.classList.add("active");
+    } else {
+      link.classList.remove("active");
+    }
+  });
+});
+
 async function fetchFeaturedProducts() {
   try {
     const res = await fetch("https://brandstestowy.smallhost.pl/api/random");
@@ -134,6 +194,7 @@ function renderAllProductsWithBanner(products, container) {
 
   const promoBannerIcon = document.createElement("span");
   promoBannerIcon.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+
   banner.appendChild(promoBannerHeading);
   promoBannerButton.appendChild(promoBannerIcon);
 
@@ -187,7 +248,7 @@ async function loadFeaturedProducts() {
 
 async function loadAllProducts() {
   const { data } = await fetchAllProducts(currentPage, pageSize);
-  const container = document.getElementById("all-products");
+  const container = document.getElementById("all-products-wrapper");
   if (data && data.length >= 4) {
     renderAllProductsWithBanner(data, container);
   } else {
