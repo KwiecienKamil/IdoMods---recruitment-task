@@ -143,6 +143,7 @@ nav ul li a {
 }
 
 #all-products {
+  margin-top: 4rem;
   display: flex;
   flex-direction: column;
   gap: 2rem;
@@ -163,22 +164,46 @@ nav ul li a {
 }
 
 .promo-banner {
-  background: #ffd966;
+  padding: 3rem 0;
   border-radius: 8px;
-  padding: 1.5rem;
   font-weight: 700;
   font-size: 1.25rem;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  justify-content: space-between;
   align-items: center;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   text-align: center;
 }
-
+.promo-banner-heading {
+  text-transform: uppercase;
+}
+.promo-banner-heading p {
+  font-weight: 400;
+}
+.promo-banner-heading h4 {
+  font-size: 2rem;
+  padding: 0 10% 0 10%;
+}
 .all-product-card {
   background: #f9f9f9;
   border-radius: 8px;
-  padding: 1rem;
   text-align: center;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+#promo-banner-button {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  background: var(--primary);
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+#promo-banner-button:hover {
+  filter: brightness(90%);
 }

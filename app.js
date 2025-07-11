@@ -110,7 +110,35 @@ function renderAllProductsWithBanner(products, container) {
 
   const banner = document.createElement("div");
   banner.className = "promo-banner";
-  banner.textContent = "Promotional Banner";
+
+  banner.style.backgroundImage = "url('./assets/mini-banner.jpg')";
+  banner.style.backgroundSize = "cover";
+  banner.style.backgroundPosition = "center";
+  banner.style.backgroundRepeat = "no-repeat";
+  banner.style.height = "100%";
+
+  const promoBannerHeading = document.createElement("div");
+  promoBannerHeading.className = "promo-banner-heading";
+
+  const promoBannerHeadingPTag = document.createElement("p");
+  promoBannerHeadingPTag.textContent = `Forma'Sint.`;
+  promoBannerHeading.appendChild(promoBannerHeadingPTag);
+
+  const promoBannerHeadingH4Tag = document.createElement("h4");
+  promoBannerHeadingH4Tag.textContent = `You'll look and feel like the champion`;
+  promoBannerHeading.appendChild(promoBannerHeadingH4Tag);
+
+  const promoBannerButton = document.createElement("button");
+  promoBannerButton.id = "promo-banner-button";
+  promoBannerButton.textContent = "CHECK THIS OUT ";
+
+  const promoBannerIcon = document.createElement("span");
+  promoBannerIcon.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
+  banner.appendChild(promoBannerHeading);
+  promoBannerButton.appendChild(promoBannerIcon);
+
+  banner.appendChild(promoBannerButton);
+
   secondRow.appendChild(banner);
 
   if (products[5]) {
