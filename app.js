@@ -1,5 +1,14 @@
 let currentPage = 1;
 let pageSize = 14;
+let isMobileView = window.innerWidth <= 1250;
+
+window.addEventListener("resize", () => {
+  const nowMobile = window.innerWidth <= 1250;
+  if (nowMobile !== isMobileView) {
+    isMobileView = nowMobile;
+    loadAllProducts();
+  }
+});
 
 document.addEventListener("DOMContentLoaded", () => {
   const featuredContainer = document.getElementById("featured-products-cards");
@@ -167,15 +176,14 @@ function renderProductCards(products, container, cardClass) {
 
 function renderAllProductsWithBanner(products, container) {
   container.innerHTML = "";
-
   const total = products.length;
-  const isWideScreen = window.innerWidth > 1250;
 
   if (total < 6) {
     renderProductCards(products, container, "all-product-card");
     return;
   }
 
+  // === First Row (first 4 products) ===
   const firstRow = document.createElement("div");
   firstRow.className = "products-row";
   products
@@ -185,9 +193,7 @@ function renderAllProductsWithBanner(products, container) {
     );
   container.appendChild(firstRow);
 
-  const secondRow = document.createElement("div");
-  secondRow.className = "products-row";
-
+  // === Create Banner Element ===
   const banner = document.createElement("div");
   banner.className = "promo-banner";
   banner.style.backgroundImage = "url('./assets/mini-banner.jpg')";
@@ -214,37 +220,48 @@ function renderAllProductsWithBanner(products, container) {
 
   const promoBannerIcon = document.createElement("span");
   promoBannerIcon.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
-
   promoBannerButton.appendChild(promoBannerIcon);
+
   banner.appendChild(promoBannerHeading);
   banner.appendChild(promoBannerButton);
 
-  if (isWideScreen) {
-    secondRow.appendChild(createProductCard(products[4], "all-product-card"));
-    secondRow.appendChild(banner);
-  } else {
-    secondRow.appendChild(createProductCard(products[4], "all-product-card"));
-    secondRow.appendChild(banner);
-  }
+  if (window.innerWidth < 1250) {
+    // === MOBILE ===
+    const bannerRow = document.createElement("div");
+    bannerRow.className = "products-row";
+    bannerRow.appendChild(banner);
+    container.appendChild(bannerRow);
 
-  if (products[5]) {
+    for (let i = 4; i < total; i += 2) {
+      const row = document.createElement("div");
+      row.className = "products-row";
+      products
+        .slice(i, i + 2)
+        .forEach((p) =>
+          row.appendChild(createProductCard(p, "all-product-card"))
+        );
+      container.appendChild(row);
+    }
+  } else {
+    const secondRow = document.createElement("div");
+    secondRow.className = "products-row";
+
+    secondRow.appendChild(createProductCard(products[4], "all-product-card"));
+    secondRow.appendChild(banner);
     secondRow.appendChild(createProductCard(products[5], "all-product-card"));
-  } else {
-    const empty = document.createElement("div");
-    secondRow.appendChild(empty);
-  }
 
-  container.appendChild(secondRow);
+    container.appendChild(secondRow);
 
-  for (let i = 6; i < total; i += 4) {
-    const row = document.createElement("div");
-    row.className = "products-row";
-    products
-      .slice(i, i + 4)
-      .forEach((p) =>
-        row.appendChild(createProductCard(p, "all-product-card"))
-      );
-    container.appendChild(row);
+    for (let i = 6; i < total; i += 4) {
+      const row = document.createElement("div");
+      row.className = "products-row";
+      products
+        .slice(i, i + 4)
+        .forEach((p) =>
+          row.appendChild(createProductCard(p, "all-product-card"))
+        );
+      container.appendChild(row);
+    }
   }
 }
 
