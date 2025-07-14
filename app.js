@@ -34,6 +34,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
   loadFeaturedProducts();
   loadAllProducts();
+
+  const menuToggle = document.getElementById("menu-toggle");
+  const mobileMenu = document.getElementById("mobile-menu");
+  const closeBtn = document.getElementById("close-mobile-menu");
+
+  menuToggle.addEventListener("click", () => {
+    mobileMenu.classList.remove("hidden");
+    mobileMenu.classList.add("open");
+  });
+
+  closeBtn.addEventListener("click", () => {
+    mobileMenu.classList.remove("open");
+    mobileMenu.classList.add("hidden");
+  });
+
+  window.addEventListener("click", (e) => {
+    if (e.target === mobileMenu) {
+      mobileMenu.classList.remove("open");
+      mobileMenu.classList.add("hidden");
+    }
+  });
 });
 
 const sections = [
@@ -134,7 +155,7 @@ function renderProductCards(products, container, cardClass) {
     const card = document.createElement("div");
     card.className = cardClass;
     card.innerHTML = `
-      <img src="${product.image}" alt="${product.text}" loading="lazy" style="max-width: 100%;" />
+      <img src="${product.image}" alt="${product.text}" loading="lazy" />
       <h3>${product.text}</h3>
       <span>${price}</span>
     `;
@@ -148,6 +169,7 @@ function renderAllProductsWithBanner(products, container) {
   container.innerHTML = "";
 
   const total = products.length;
+  const isWideScreen = window.innerWidth > 1250;
 
   if (total < 6) {
     renderProductCards(products, container, "all-product-card");
@@ -166,16 +188,14 @@ function renderAllProductsWithBanner(products, container) {
   const secondRow = document.createElement("div");
   secondRow.className = "products-row";
 
-  secondRow.appendChild(createProductCard(products[4], "all-product-card"));
-
   const banner = document.createElement("div");
   banner.className = "promo-banner";
-
   banner.style.backgroundImage = "url('./assets/mini-banner.jpg')";
   banner.style.backgroundSize = "cover";
   banner.style.backgroundPosition = "center";
   banner.style.backgroundRepeat = "no-repeat";
   banner.style.height = "100%";
+  banner.style.position = "relative";
 
   const promoBannerHeading = document.createElement("div");
   promoBannerHeading.className = "promo-banner-heading";
@@ -195,12 +215,17 @@ function renderAllProductsWithBanner(products, container) {
   const promoBannerIcon = document.createElement("span");
   promoBannerIcon.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
 
-  banner.appendChild(promoBannerHeading);
   promoBannerButton.appendChild(promoBannerIcon);
-
+  banner.appendChild(promoBannerHeading);
   banner.appendChild(promoBannerButton);
 
-  secondRow.appendChild(banner);
+  if (isWideScreen) {
+    secondRow.appendChild(createProductCard(products[4], "all-product-card"));
+    secondRow.appendChild(banner);
+  } else {
+    secondRow.appendChild(createProductCard(products[4], "all-product-card"));
+    secondRow.appendChild(banner);
+  }
 
   if (products[5]) {
     secondRow.appendChild(createProductCard(products[5], "all-product-card"));
@@ -241,17 +266,32 @@ function createProductCard(product, className) {
 }
 
 async function loadFeaturedProducts() {
-  const { data } = await fetchFeaturedProducts();
   const container = document.getElementById("featured-products-cards");
+  const spinner = document.getElementById("loading-spinner");
+
+  spinner.classList.remove("hidden");
+  container.innerHTML = "";
+
+  const { data } = await fetchFeaturedProducts();
   renderProductCards(data || [], container, "featured-product-card");
+
+  spinner.classList.add("hidden");
 }
 
 async function loadAllProducts() {
-  const { data } = await fetchAllProducts(currentPage, pageSize);
   const container = document.getElementById("all-products-wrapper");
+  const spinner = document.getElementById("loading-spinner");
+
+  spinner.classList.remove("hidden");
+  container.innerHTML = "";
+
+  const { data } = await fetchAllProducts(currentPage, pageSize);
+
   if (data && data.length >= 4) {
     renderAllProductsWithBanner(data, container);
   } else {
     renderProductCards(data || [], container, "all-product-card");
   }
+
+  spinner.classList.add("hidden");
 }
