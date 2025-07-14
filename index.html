@@ -50,6 +50,7 @@
       <div id="overlay" class="hidden"></div>
       <div id="mobile-menu" class="hidden">
         <div class="mobile-menu-content">
+          <img src="./assets/forma-icon.png" alt="Forma icon" />
           <button id="close-mobile-menu" aria-label="Close menu">
             <i class="fa-solid fa-xmark"></i>
             CLOSE
@@ -62,8 +63,16 @@
         </div>
       </div>
       <section id="hero">
-        <img src="./assets/forma-logo-hero.png" alt="FormaSint" />
-        <img src="./assets/hero-photo.png" alt="Person climbing a mountain" />
+        <img
+          src="./assets/forma-logo-hero.png"
+          alt="FormaSint"
+          id="hero-image-title"
+        />
+        <img
+          src="./assets/hero-photo.png"
+          alt="Person climbing a mountain"
+          id="hero-image-main"
+        />
       </section>
       <section id="featured-products">
         <p>FEATURED PRODUCTS</p>
@@ -92,6 +101,16 @@
         <div id="loading-spinner" class="spinner">Loading products...</div>
         <div id="all-products-wrapper"></div>
       </section>
+    </div>
+    <div id="product-modal" class="hidden">
+      <div class="modal-content">
+        <p id="modal-id"></p>
+        <span id="modal-close" class="modal-close">
+          <i class="fa-solid fa-xmark"></i>
+          CLOSE
+        </span>
+        <img id="modal-image" src="" alt="Product Image" />
+      </div>
     </div>
     <script src="./app.js"></script>
   </body>

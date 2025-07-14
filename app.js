@@ -51,12 +51,26 @@ document.addEventListener("DOMContentLoaded", () => {
   menuToggle.addEventListener("click", () => {
     mobileMenu.classList.remove("hidden");
     mobileMenu.classList.add("open");
+
+    document.getElementById("overlay").classList.remove("hidden");
+    document.getElementById("overlay").classList.add("visible");
   });
 
-  closeBtn.addEventListener("click", () => {
+  closeBtn.addEventListener("click", closeMobileMenu);
+  window.addEventListener("click", (e) => {
+    if (e.target === mobileMenu || e.target === overlay) {
+      closeMobileMenu();
+    }
+  });
+
+  function closeMobileMenu() {
     mobileMenu.classList.remove("open");
     mobileMenu.classList.add("hidden");
-  });
+
+    const overlay = document.getElementById("overlay");
+    overlay.classList.remove("visible");
+    overlay.classList.add("hidden");
+  }
 
   window.addEventListener("click", (e) => {
     if (e.target === mobileMenu) {
@@ -143,7 +157,9 @@ async function fetchAllProducts(pageNumber, pageSize) {
       `https://brandstestowy.smallhost.pl/api/random?pageNumber=${pageNumber}&pageSize=${pageSize}`
     );
     if (!res.ok) throw new Error("Network error");
-    return await res.json();
+    const json = await res.json();
+    console.log("Fetched products:", json);
+    return json;
   } catch (err) {
     console.error("Error fetching all products:", err);
     return { data: [] };
@@ -165,8 +181,10 @@ function renderProductCards(products, container, cardClass) {
     card.className = cardClass;
     card.innerHTML = `
       <img src="${product.image}" alt="${product.text}" loading="lazy" />
-      <h3>${product.text}</h3>
-      <span>${price}</span>
+      <div class="featured-product-info">
+      <span>${product.text}</span>
+      <p>${price}</p>
+      </div>
     `;
     fragment.appendChild(card);
   });
@@ -183,7 +201,6 @@ function renderAllProductsWithBanner(products, container) {
     return;
   }
 
-  // === First Row (first 4 products) ===
   const firstRow = document.createElement("div");
   firstRow.className = "products-row";
   products
@@ -193,7 +210,6 @@ function renderAllProductsWithBanner(products, container) {
     );
   container.appendChild(firstRow);
 
-  // === Create Banner Element ===
   const banner = document.createElement("div");
   banner.className = "promo-banner";
   banner.style.backgroundImage = "url('./assets/mini-banner.jpg')";
@@ -226,7 +242,6 @@ function renderAllProductsWithBanner(products, container) {
   banner.appendChild(promoBannerButton);
 
   if (window.innerWidth < 1250) {
-    // === MOBILE ===
     const bannerRow = document.createElement("div");
     bannerRow.className = "products-row";
     bannerRow.appendChild(banner);
@@ -270,15 +285,23 @@ function createProductCard(product, className) {
   const formattedPrice = rawPrice.toLocaleString("de-DE", {
     minimumFractionDigits: 2,
   });
-  const price = `€ ${formattedPrice} EUR`;
+
+  const formattedId = `ID: ${String(product.id).padStart(2, "0")}`;
 
   const card = document.createElement("div");
   card.className = className;
   card.innerHTML = `
-    <img src="${product.image}" alt="${product.text}" loading="lazy" style="max-width: 100%;" />
-    <h3>${product.text}</h3>
-    <span>${price}</span>
+    <img src="${product.image}" alt="${product.text}" loading="lazy" />
+    <span class="product-id">${formattedId}</span>
   `;
+
+  card.addEventListener("click", () => {
+    const formattedId = `ID: ${String(product.id).padStart(2, "0")}`;
+    openProductModal({
+      imageSrc: product.image,
+      id: formattedId,
+    });
+  });
   return card;
 }
 
@@ -312,3 +335,30 @@ async function loadAllProducts() {
 
   spinner.classList.add("hidden");
 }
+
+const modal = document.getElementById("product-modal");
+const overlay = document.getElementById("overlay");
+const closeModalBtn = document.getElementById("modal-close");
+
+function openProductModal({ imageSrc, id }) {
+  document.getElementById("modal-image").src = imageSrc;
+  document.getElementById("modal-id").textContent = id;
+
+  modal.classList.remove("hidden");
+  overlay.classList.remove("hidden");
+  overlay.classList.add("visible");
+}
+
+function closeProductModal() {
+  modal.classList.add("hidden");
+  overlay.classList.remove("visible");
+  overlay.classList.add("hidden");
+}
+
+overlay.addEventListener("click", () => {
+  if (!modal.classList.contains("hidden")) {
+    closeProductModal();
+  }
+});
+
+closeModalBtn.addEventListener("click", closeProductModal);
